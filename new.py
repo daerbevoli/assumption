@@ -1,32 +1,23 @@
 import logging
+import random
+import time
 from datetime import datetime, timedelta
 
-import pandas as pd
+import pandas
 from dateutil import rrule as rr
+
+import pandas as pd
 
 from assume import World
 from assume.common.forecasts import NaiveForecast
 from assume.common.market_objects import MarketConfig, MarketProduct
 
 import dotenv
-
-import numpy as np
-import pandas as pd
-
-
 dotenv.load_dotenv()
 
 from wondergrid.datasets import load_dataset
-from wondergrid.datasets.geo import GeoDataset
 from wondergrid.datasets.dmk import DMKDataset
-from wondergrid.datasets.era5 import ERA5Dataset
-from wondergrid.simulator.weather import DataReplayWeatherModel
-from wondergrid.simulator.networkuser import DataReplayNetworkUserModel
-from wondergrid.simulator.core import Simulation
 
-
-
-from ResidentAgent import ResidentAgent
 
 log = logging.getLogger(__name__)
 
@@ -35,21 +26,20 @@ db_uri = "sqlite:///local_db/assume_db.db"
 world = World(database_uri=db_uri)
 
 start = datetime(2022, 1, 1)
-end = datetime(2022, 12, 31)
+end = datetime(2022, 12, 31, 23, 45, 00)
 index = pd.date_range(
     start=start,
-    end=end + timedelta(hours=24),
-    freq="h",
+    end=end,
+    freq="15min",
 )
-sim_id = "world_script_simulation"
+sim_id = "sim"
 
 world.setup(
     start=start,
     end=end,
-    # save_frequency_hours=48,
     save_frequency_hours=24,
     simulation_id=sim_id,
-    #index=index,
+    index=index,
 )
 
 
@@ -61,8 +51,8 @@ marketConf = MarketConfig(
         opening_duration=timedelta(hours=1),
         market_mechanism="pay_as_clear",
         market_products=[MarketProduct(timedelta(hours=1), 24, timedelta(hours=1))],
-        maximum_bid_volume=20000,
-        maximum_bid_price=100,
+        maximum_bid_volume=20000, # choose the value wisely
+        maximum_bid_price=15000,
         additional_fields=["block_id", "link", "exclusive_id"],
     )
 
@@ -72,60 +62,115 @@ world.add_market_operator(id=mo_id)
 
 world.add_market(market_operator_id=mo_id, market_config=marketConf)
 
-# Initialize the dataset
+# Setting up agent0
+
+# Load the CSV into a DataFrame, ensuring the datetime column is parsed
+df = pd.read_csv('MeasuredForecastedLoadAgent0.csv')
+
+# Remove unnecessary columns
+columns_to_remove = ['Datetime','Resolution code', 'Most recent P10', 'Most recent P90', 'Day-ahead 6PM forecast',
+       'Day-ahead 6PM P10', 'Day-ahead 6PM P90', 'Most recent forecast', 'Week-ahead forecast']
+df = df.drop(columns=columns_to_remove, errors='ignore')  # 'errors=ignore' prevents errors if a column is missing
+
+# Reverse time order (starts with 31/12/2022)
+df = df.apply(lambda col: col[::-1].values)
+
+# Set index to the index of the simulation
+df = df.set_index(index)
+
+print(df['Total Load'])
+
+# Initialize the dataset for residential units
 dmkdataset: DMKDataset = load_dataset('fluvius/dmk')
-dmkdataset = dmkdataset.filter(n=1)
 
-# Initialize the agent
-residence = ResidentAgent()
+# We will work with 5 sets for now
+dmkdataset = dmkdataset.filter(n=5)
 
-# load the agent with the first profile (draft)
-for profile in dmkdataset.get_profiles():
-    profile = profile.resample('h').mean()
-    residence.set_load(profile)
+profile = pandas.DataFrame()
 
-residenceAgent = {
-    "id": "agent1",
-    "data": residence.get_load(),
-    "role": "consumer"
+# Make a list of sets to randomly choose from
+loads = []
+feeds = []
+# load the agent with the profile
+for (iid, profile, metadata) in dmkdataset.get_profiles():
+    loads.append(profile['load'])
+    feeds.append(profile['feedin'])
 
-}
+#print(loads)
+#print(feeds)
 
-# Get panda Series of timestamp and load
-agentDemand = residence.get_load()['load']
+# Set up agent0 unit
+world.add_unit_operator("agent0_operator")
 
-print(agentDemand)
-
-world.add_unit_operator("demand_operator")
-
-
-# Link demand list with forecaster (failed)
-demand_forecast = NaiveForecast(index, demand=agentDemand)
+# Link agent0 list with forecaster
+agent0_forecast = NaiveForecast(index, demand=df['Total Load'])
 
 world.add_unit(
-    id="agent1",
+    id="demand_unit", # YOU CANNOT CHANGE THE ID TO ANYTHING OTHER THAN DEMAND OR TYPE OF POWER UNIT
     unit_type="demand",
-    unit_operator_id="demand_operator",
+    unit_operator_id="agent0_operator",
     unit_params={
         "min_power": 0,
-        "max_power": 4000,
+        "max_power": 10000,
         "bidding_strategies": {"EOM": "naive_eom"},
         "technology": "demand",
     },
-    forecaster=demand_forecast,
+    forecaster=agent0_forecast,
 )
 
-world.add_unit_operator("unit_operator")
+
+
+# Set up load unit
+world.add_unit_operator("load_operator")
+
+# Link load list with forecaster
+load_forecast = NaiveForecast(index, demand=random.choice(loads))
+
+world.add_unit(
+    id="demand_unit", # YOU CANNOT CHANGE THE ID TO ANYTHING OTHER THAN DEMAND OR TYPE OF POWER UNIT
+    unit_type="demand",
+    unit_operator_id="load_operator",
+    unit_params={
+        "min_power": 0,
+        "max_power": 10000,
+        "bidding_strategies": {"EOM": "naive_eom"},
+        "technology": "demand",
+    },
+    forecaster=load_forecast,
+)
+
+
+# Set up feedin unit as producer unit
+world.add_unit_operator("feedin_operator")
+
+feedin_forecast = NaiveForecast(index, availability=1, fuel_price=3, co2_price=0.1, demand=random.choice(feeds))
+
+world.add_unit(
+    id="nuclear_unit",
+    unit_type="power_plant",
+    unit_operator_id="feedin_operator",
+    unit_params={
+        "min_power": 100,
+        "max_power": 10000,
+        "bidding_strategies": {"EOM": "naive_eom"},
+        "technology": "solar",
+    },
+    forecaster=feedin_forecast,
+)
+
+
+# Set up producer unit
+world.add_unit_operator("power_operator")
 
 nuclear_forecast = NaiveForecast(index, availability=1, fuel_price=3, co2_price=0.1)
 
 world.add_unit(
     id="nuclear_unit",
     unit_type="power_plant",
-    unit_operator_id="unit_operator",
+    unit_operator_id="power_operator",
     unit_params={
-        "min_power": 200,
-        "max_power": 5000,
+        "min_power": 100,
+        "max_power": 10000,
         "bidding_strategies": {"EOM": "naive_eom"},
         "technology": "nuclear",
     },
@@ -133,8 +178,17 @@ world.add_unit(
 )
 
 
-# Number of agents
-num_agents = 10000
+# Time the simulation
+start_time = time.perf_counter()
 
 # Run simulation
 world.run()
+
+end_time = time.perf_counter()
+
+print(f"Execution time of simulation: {end_time - start_time:.6f} seconds")
+
+# timeit
+# python profilers time
+# tracemalloc
+
