@@ -43,7 +43,7 @@ world.setup(
 )
 
 
-# Configuration of the energy market
+# Configuration of the electricity market
 # Only one market
 marketConf = MarketConfig(
         market_id="EOM", # Energy Only Market
@@ -57,7 +57,7 @@ marketConf = MarketConfig(
     )
 
 
-mo_id = "market_operator"
+mo_id = "Electricity_market"
 world.add_market_operator(id=mo_id)
 
 world.add_market(market_operator_id=mo_id, market_config=marketConf)
@@ -84,7 +84,7 @@ print(df['Total Load'])
 dmkdataset: DMKDataset = load_dataset('fluvius/dmk')
 
 # We will work with 5 sets for now
-dmkdataset = dmkdataset.filter(n=5)
+dmkdataset = dmkdataset.filter(n=10)
 
 profile = pandas.DataFrame()
 
@@ -126,9 +126,11 @@ world.add_unit_operator("load_operator")
 # Link load list with forecaster
 load_forecast = NaiveForecast(index, demand=random.choice(loads))
 
+print(load_forecast.__getitem__("demand"))
+
 world.add_unit(
-    id="demand_unit", # YOU CANNOT CHANGE THE ID TO ANYTHING OTHER THAN DEMAND OR TYPE OF POWER UNIT
-    unit_type="demand",
+    id="resident_load",
+    unit_type="demand", # YOU CANNOT CHANGE THE TYPE TO ANYTHING OTHER THAN DEMAND OR TYPE OF POWER UNIT
     unit_operator_id="load_operator",
     unit_params={
         "min_power": 0,
@@ -139,14 +141,16 @@ world.add_unit(
     forecaster=load_forecast,
 )
 
-
 # Set up feedin unit as producer unit
 world.add_unit_operator("feedin_operator")
 
 feedin_forecast = NaiveForecast(index, availability=1, fuel_price=3, co2_price=0.1, demand=random.choice(feeds))
 
+print(feedin_forecast.__getitem__("demand"))
+
+
 world.add_unit(
-    id="nuclear_unit",
+    id="resident_feedin",
     unit_type="power_plant",
     unit_operator_id="feedin_operator",
     unit_params={
@@ -182,7 +186,7 @@ world.add_unit(
 start_time = time.perf_counter()
 
 # Run simulation
-world.run()
+#world.run()
 
 end_time = time.perf_counter()
 
