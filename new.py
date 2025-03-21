@@ -186,7 +186,7 @@ world.add_unit(
 start_time = time.perf_counter()
 
 # Run simulation
-#world.run()
+world.run()
 
 end_time = time.perf_counter()
 
