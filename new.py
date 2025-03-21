@@ -3,7 +3,6 @@ import random
 import time
 from datetime import datetime, timedelta
 
-import pandas
 from dateutil import rrule as rr
 
 import pandas as pd
@@ -12,11 +11,8 @@ from assume import World
 from assume.common.forecasts import NaiveForecast
 from assume.common.market_objects import MarketConfig, MarketProduct
 
-import dotenv
-dotenv.load_dotenv()
-
-from wondergrid.datasets import load_dataset
-from wondergrid.datasets.dmk import DMKDataset
+from loadCsv import loadCsv
+from loadDataFluvius import loadFluviusData
 
 
 log = logging.getLogger(__name__)
@@ -44,15 +40,21 @@ world.setup(
 
 
 # Configuration of the electricity market
-# Only one market
+# Day Ahead market
+# 1 hour window to place bid for every hour of the nex day
 marketConf = MarketConfig(
-        market_id="EOM", # Energy Only Market
+        # Energy Only Market
+        market_id="EOM",
+        # open everyday from start to end with a 24 hour interval
         opening_hours=rr.rrule(rr.HOURLY, interval=24, dtstart=start, until=end),
+        # Open for one hour (to buy and sell)
         opening_duration=timedelta(hours=1),
+        # clearing mechanism -> uniform price for buyers and sells at the conclusion of the auction
         market_mechanism="pay_as_clear",
         market_products=[MarketProduct(timedelta(hours=1), 24, timedelta(hours=1))],
         maximum_bid_volume=20000, # choose the value wisely
         maximum_bid_price=15000,
+
         additional_fields=["block_id", "link", "exclusive_id"],
     )
 
@@ -63,41 +65,12 @@ world.add_market_operator(id=mo_id)
 world.add_market(market_operator_id=mo_id, market_config=marketConf)
 
 # Setting up agent0
-
-# Load the CSV into a DataFrame, ensuring the datetime column is parsed
-df = pd.read_csv('MeasuredForecastedLoadAgent0.csv')
-
 # Remove unnecessary columns
 columns_to_remove = ['Datetime','Resolution code', 'Most recent P10', 'Most recent P90', 'Day-ahead 6PM forecast',
        'Day-ahead 6PM P10', 'Day-ahead 6PM P90', 'Most recent forecast', 'Week-ahead forecast']
-df = df.drop(columns=columns_to_remove, errors='ignore')  # 'errors=ignore' prevents errors if a column is missing
 
-# Reverse time order (starts with 31/12/2022)
-df = df.apply(lambda col: col[::-1].values)
-
-# Set index to the index of the simulation
-df = df.set_index(index)
-
-print(df['Total Load'])
-
-# Initialize the dataset for residential units
-dmkdataset: DMKDataset = load_dataset('fluvius/dmk')
-
-# We will work with 5 sets for now
-dmkdataset = dmkdataset.filter(n=10)
-
-profile = pandas.DataFrame()
-
-# Make a list of sets to randomly choose from
-loads = []
-feeds = []
-# load the agent with the profile
-for (iid, profile, metadata) in dmkdataset.get_profiles():
-    loads.append(profile['load'])
-    feeds.append(profile['feedin'])
-
-#print(loads)
-#print(feeds)
+# load the dataframe
+df = loadCsv('MeasuredForecastedLoadAgent0.csv', columns_to_remove, index)
 
 # Set up agent0 unit
 world.add_unit_operator("agent0_operator")
@@ -118,7 +91,8 @@ world.add_unit(
     forecaster=agent0_forecast,
 )
 
-
+# setting up dummy agents with Fluvius data
+loads, feeds = loadFluviusData(10)
 
 # Set up load unit
 world.add_unit_operator("load_operator")
@@ -147,7 +121,6 @@ world.add_unit_operator("feedin_operator")
 feedin_forecast = NaiveForecast(index, availability=1, fuel_price=3, co2_price=0.1, demand=random.choice(feeds))
 
 print(feedin_forecast.__getitem__("demand"))
-
 
 world.add_unit(
     id="resident_feedin",
