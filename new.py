@@ -28,7 +28,7 @@ index = pd.date_range(
     end=end,
     freq="15min",
 )
-sim_id = "sim"
+sim_id = "sim_main"
 
 world.setup(
     start=start,
@@ -45,7 +45,7 @@ world.setup(
 marketConf = MarketConfig(
         # Energy Only Market
         market_id="EOM",
-        # open everyday from start to end with a 24 hour interval
+        # open every day from start to end with a 24 hour interval
         opening_hours=rr.rrule(rr.HOURLY, interval=24, dtstart=start, until=end),
         # Open for one hour (to buy and sell)
         opening_duration=timedelta(hours=1),
@@ -58,10 +58,8 @@ marketConf = MarketConfig(
         additional_fields=["block_id", "link", "exclusive_id"],
     )
 
-
 mo_id = "Electricity_market"
 world.add_market_operator(id=mo_id)
-
 world.add_market(market_operator_id=mo_id, market_config=marketConf)
 
 # Setting up agent0
@@ -83,8 +81,6 @@ world.add_unit(
     unit_type="demand",
     unit_operator_id="agent0_operator",
     unit_params={
-        "min_power": 0,
-        "max_power": 10000,
         "bidding_strategies": {"EOM": "naive_eom"},
         "technology": "demand",
     },
@@ -94,21 +90,21 @@ world.add_unit(
 # setting up dummy agents with Fluvius data
 loads, feeds = loadFluviusData(10)
 
+l = random.choice(loads)
+print(l)
+f = random.choice(feeds)
+print(f)
 # Set up load unit
 world.add_unit_operator("load_operator")
 
 # Link load list with forecaster
-load_forecast = NaiveForecast(index, demand=random.choice(loads))
-
-print(load_forecast.__getitem__("demand"))
+load_forecast = NaiveForecast(index, demand=l)
 
 world.add_unit(
-    id="resident_load",
+    id="demand_unit", # If this change, it does not participate in the market? Very trivial
     unit_type="demand", # YOU CANNOT CHANGE THE TYPE TO ANYTHING OTHER THAN DEMAND OR TYPE OF POWER UNIT
     unit_operator_id="load_operator",
     unit_params={
-        "min_power": 0,
-        "max_power": 10000,
         "bidding_strategies": {"EOM": "naive_eom"},
         "technology": "demand",
     },
@@ -118,9 +114,7 @@ world.add_unit(
 # Set up feedin unit as producer unit
 world.add_unit_operator("feedin_operator")
 
-feedin_forecast = NaiveForecast(index, availability=1, fuel_price=3, co2_price=0.1, demand=random.choice(feeds))
-
-print(feedin_forecast.__getitem__("demand"))
+feedin_forecast = NaiveForecast(index, availability=1, fuel_price=3, co2_price=0.1, demand=f)
 
 world.add_unit(
     id="resident_feedin",
@@ -169,3 +163,9 @@ print(f"Execution time of simulation: {end_time - start_time:.6f} seconds")
 # python profilers time
 # tracemalloc
 
+
+"""
+First consumer places his bid, x demand for x price and then producer places his offer, 10000 MW for 3 
+market order is first consumer in minus then generator in +
+market dispatch is actual buying after clearing the market
+"""
