@@ -18,11 +18,10 @@ def loadFluviusData(amountToFilter: int):
     profile = pd.DataFrame()
 
     # Make a list of sets to randomly choose from
-    loads = []
-    feeds = []
+    meters = []
     # load the agent with the profile
     for (iid, profile, metadata) in dmkdataset.get_profiles():
-        loads.append(profile['load'])
-        feeds.append(profile['feedin'])
+        profile = profile.resample('h').mean()
+        meters.append(profile)
 
-    return loads, feeds
+    return meters

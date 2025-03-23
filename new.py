@@ -22,11 +22,11 @@ db_uri = "sqlite:///local_db/assume_db.db"
 world = World(database_uri=db_uri)
 
 start = datetime(2022, 1, 1)
-end = datetime(2022, 12, 31, 23, 45, 00)
+end = datetime(2022, 12, 31)
 index = pd.date_range(
     start=start,
     end=end,
-    freq="15min",
+    freq="h",
 )
 sim_id = "sim_main"
 
@@ -51,7 +51,7 @@ marketConf = MarketConfig(
         opening_duration=timedelta(hours=1),
         # clearing mechanism -> uniform price for buyers and sells at the conclusion of the auction
         market_mechanism="pay_as_clear",
-        market_products=[MarketProduct(timedelta(hours=1), 24, timedelta(hours=1))],
+        market_products=[MarketProduct(timedelta(minutes=60), 24, timedelta(minutes=0))],
         maximum_bid_volume=20000, # choose the value wisely
         maximum_bid_price=15000,
 
@@ -62,6 +62,7 @@ mo_id = "Electricity_market"
 world.add_market_operator(id=mo_id)
 world.add_market(market_operator_id=mo_id, market_config=marketConf)
 
+'''
 # Setting up agent0
 # Remove unnecessary columns
 columns_to_remove = ['Datetime','Resolution code', 'Most recent P10', 'Most recent P90', 'Day-ahead 6PM forecast',
@@ -69,6 +70,8 @@ columns_to_remove = ['Datetime','Resolution code', 'Most recent P10', 'Most rece
 
 # load the dataframe
 df = loadCsv('MeasuredForecastedLoadAgent0.csv', columns_to_remove, index)
+
+print(df['Total Load'])
 
 # Set up agent0 unit
 world.add_unit_operator("agent0_operator")
@@ -81,40 +84,47 @@ world.add_unit(
     unit_type="demand",
     unit_operator_id="agent0_operator",
     unit_params={
+        "min_power": 0,
+        "max_power": 10000, # agent0 consumes a lot of energy
         "bidding_strategies": {"EOM": "naive_eom"},
         "technology": "demand",
+        "price": 4,
     },
     forecaster=agent0_forecast,
 )
-
+'''
 # setting up dummy agents with Fluvius data
-loads, feeds = loadFluviusData(10)
+meters = loadFluviusData(1)
 
-l = random.choice(loads)
-print(l)
-f = random.choice(feeds)
-print(f)
-# Set up load unit
+random_meter = random.choice(meters)
+
 world.add_unit_operator("load_operator")
 
+print(random_meter.head(20))
+print(random_meter['load'].size)
+print(index.size)
+
 # Link load list with forecaster
-load_forecast = NaiveForecast(index, demand=l)
+load_forecast = NaiveForecast(index, demand=random_meter['load'])
 
 world.add_unit(
     id="demand_unit", # If this change, it does not participate in the market? Very trivial
     unit_type="demand", # YOU CANNOT CHANGE THE TYPE TO ANYTHING OTHER THAN DEMAND OR TYPE OF POWER UNIT
     unit_operator_id="load_operator",
     unit_params={
+        "min_power": 0,
+        "max_power": 10000,
         "bidding_strategies": {"EOM": "naive_eom"},
         "technology": "demand",
+        "price": 4,
     },
     forecaster=load_forecast,
 )
-
+'''
 # Set up feedin unit as producer unit
 world.add_unit_operator("feedin_operator")
 
-feedin_forecast = NaiveForecast(index, availability=1, fuel_price=3, co2_price=0.1, demand=f)
+feedin_forecast = NaiveForecast(index, availability=1, fuel_price=3, co2_price=0.1, demand=random_meter['feedin'])
 
 world.add_unit(
     id="resident_feedin",
@@ -128,7 +138,7 @@ world.add_unit(
     },
     forecaster=feedin_forecast,
 )
-
+'''
 
 # Set up producer unit
 world.add_unit_operator("power_operator")
