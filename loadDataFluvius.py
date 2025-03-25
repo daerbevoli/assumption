@@ -13,15 +13,15 @@ def loadFluviusData(amountToFilter: int):
     dmkdataset: DMKDataset = load_dataset('fluvius/dmk')
 
     # We will work with 5 sets for now
-    dmkdataset = dmkdataset.filter(n=amountToFilter)
+    dmkdataset = dmkdataset.filter(n=amountToFilter).resample('h')
 
-    profile = pd.DataFrame()
+    profile = pd.DataFrame
 
     # Make a list of sets to randomly choose from
     meters = []
     # load the agent with the profile
     for (iid, profile, metadata) in dmkdataset.get_profiles():
-        profile = profile.resample('h').mean()
+        profile[['load', 'feedin']] = profile[['load', 'feedin']] * 1e-3  # Convert kWh to MW
         meters.append(profile)
 
     return meters

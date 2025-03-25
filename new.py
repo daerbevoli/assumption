@@ -22,12 +22,13 @@ db_uri = "sqlite:///local_db/assume_db.db"
 world = World(database_uri=db_uri)
 
 start = datetime(2022, 1, 1)
-end = datetime(2022, 12, 31)
+end = datetime(2022, 12, 31, 23, 45, 00)
 index = pd.date_range(
     start=start,
     end=end,
     freq="h",
 )
+
 sim_id = "sim_main"
 
 world.setup(
@@ -51,7 +52,7 @@ marketConf = MarketConfig(
         opening_duration=timedelta(hours=1),
         # clearing mechanism -> uniform price for buyers and sells at the conclusion of the auction
         market_mechanism="pay_as_clear",
-        market_products=[MarketProduct(timedelta(minutes=60), 24, timedelta(minutes=0))],
+        market_products=[MarketProduct(timedelta(minutes=60), 24, timedelta(minutes=0))], # per kwartier
         maximum_bid_volume=20000, # choose the value wisely
         maximum_bid_price=15000,
 
@@ -62,14 +63,13 @@ mo_id = "Electricity_market"
 world.add_market_operator(id=mo_id)
 world.add_market(market_operator_id=mo_id, market_config=marketConf)
 
-'''
 # Setting up agent0
 # Remove unnecessary columns
 columns_to_remove = ['Datetime','Resolution code', 'Most recent P10', 'Most recent P90', 'Day-ahead 6PM forecast',
        'Day-ahead 6PM P10', 'Day-ahead 6PM P90', 'Most recent forecast', 'Week-ahead forecast']
 
 # load the dataframe
-df = loadCsv('MeasuredForecastedLoadAgent0.csv', columns_to_remove, index)
+df = loadCsv('MeasuredForecastedLoadAgent0.csv', columns_to_remove)
 
 print(df['Total Load'])
 
@@ -92,7 +92,8 @@ world.add_unit(
     },
     forecaster=agent0_forecast,
 )
-'''
+
+
 # setting up dummy agents with Fluvius data
 meters = loadFluviusData(1)
 
@@ -100,9 +101,16 @@ random_meter = random.choice(meters)
 
 world.add_unit_operator("load_operator")
 
+# Time the simulation
+start_time = time.perf_counter()
+
+# Run simulation
 print(random_meter.head(20))
-print(random_meter['load'].size)
-print(index.size)
+
+end_time = time.perf_counter()
+
+print(f"Execution time of simulation: {end_time - start_time:.6f} seconds")
+
 
 # Link load list with forecaster
 load_forecast = NaiveForecast(index, demand=random_meter['load'])
@@ -150,7 +158,7 @@ world.add_unit(
     unit_type="power_plant",
     unit_operator_id="power_operator",
     unit_params={
-        "min_power": 100,
+        "min_power": 10,
         "max_power": 10000,
         "bidding_strategies": {"EOM": "naive_eom"},
         "technology": "nuclear",
@@ -172,6 +180,9 @@ print(f"Execution time of simulation: {end_time - start_time:.6f} seconds")
 # timeit
 # python profilers time
 # tracemalloc
+
+# DOUBLE CHECK UNITS ELIA FLUVIUS AND FRAMEWORK
+# PROFILEN
 
 
 """
