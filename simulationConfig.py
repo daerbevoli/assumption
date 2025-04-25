@@ -8,10 +8,10 @@ from loadCsv import loadCsv
 
 def save_powerplant_units(path):
     powerplant_units_data = {
-        "name": ["nuclear", "lignite", "coal", "gas", "ResidentSolar"],
-        "technology": ["nuclear", "lignite", "hard coal", "combined cycle gas turbine", "solar"],
+        "name": ["nuclear", "natural gas", "wind", "biofuel", "ResidentSolar"],
+        "technology": ["nuclear", "methane", "wind", "bio", "solar"],
         "bidding_EOM": ["naive_eom"] * 5,
-        "fuel_type": ["uranium", "lignite", "hard coal", "natural gas", "solar"],
+        "fuel_type": ["uranium", "methane", "wind", "bio", "solar"],
         "emission_factor": [0.0, 0.4, 0.3, 0.2, 0.0],
         "max_power": [1000.0, 8000.0, 10.0, 100.0, None],
         "min_power": [200.0, 200.0, 1.0, 10.0, 0.0],

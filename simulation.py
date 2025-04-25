@@ -39,13 +39,17 @@ def main():
     # ---- choose one: yappi / cProfile / raw run ----
 
     # Just run normally:
-    run_simulation(5)
+    # run_simulation(5)
 
     # OR: run with yappi profiling
-    # yappi.set_clock_type("WALL")
-    # with yappi.run():
-    #     run_simulation()
-    # yappi.get_func_stats().save("profileWALL.prof", type="pstat")
+    yappi.set_clock_type("WALL")
+    with yappi.run():
+         run_simulation(5)
+    yappi.get_func_stats().save("profileWALL.prof", type="pstat")
+
+    # different code - 285 s - aggretate_step_amount 36.8 s
+    # Assume code -
+
 
     # OR: run with cProfile (much slower, not ideal for big runs)
     # import cProfile
