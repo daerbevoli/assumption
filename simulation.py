@@ -7,18 +7,11 @@ from assume import World
 from assume.scenario.loader_csv import load_scenario_folder
 from simulationConfig import runConfig
 
-
-def set_cpu_affinity(cores):
-    """Bind simulation process to specific CPU cores."""
-    p = psutil.Process(os.getpid())
-    p.cpu_affinity(cores)
-    print(f"Running on CPUs: {p.cpu_affinity()}")
-
-
 def run_simulation(num_agents):
+
     # CONFIG
-    path = "./data/units"
-    db_uri = "sqlite:///local_db/sim.db"
+    db_uri = "sqlite:///sim/sim.db"
+    path = "./sim/units"
 
     # Prepare data
     start = time.perf_counter()
@@ -32,7 +25,7 @@ def run_simulation(num_agents):
 
     # Load Scenario
     start = time.perf_counter()
-    load_scenario_folder(world, inputs_path="./data", scenario="units", study_case="Day_Ahead_market")
+    load_scenario_folder(world, inputs_path="./sim", scenario="units", study_case="Day_Ahead_market")
     print(f"Scenario load time: {time.perf_counter() - start:.3f} sec")
 
     # RUN simulation
@@ -43,12 +36,10 @@ def run_simulation(num_agents):
 
 
 def main():
-    set_cpu_affinity([0, 1, 2, 3])  # You can change to [2, 3] etc.
-
     # ---- choose one: yappi / cProfile / raw run ----
 
     # Just run normally:
-    run_simulation(20)
+    run_simulation(5)
 
     # OR: run with yappi profiling
     # yappi.set_clock_type("WALL")

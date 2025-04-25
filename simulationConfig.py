@@ -23,12 +23,15 @@ def save_powerplant_units(path):
     df.to_csv(f"{path}/powerplant_units.csv", index=False)
 
 def save_fuel_prices(path):
+    # Create the data
     fuel_prices_data = {
         "fuel": ["uranium", "lignite", "hard coal", "natural gas", "oil", "biomass", "co2"],
         "price": [1, 2, 10, 25, 40, 20, 25],
     }
-    df = pd.DataFrame(fuel_prices_data)
-    df.to_csv(f"{path}/fuel_prices.csv", index=False)
+
+    # Convert to DataFrame and save as CSV
+    fuel_prices_df = pd.DataFrame(fuel_prices_data).T
+    fuel_prices_df.to_csv(f"{path}/fuel_prices_df.csv", index=True, header=False)
 
 
 def save_demand_units(path: str, num_agents: int):

@@ -17,7 +17,7 @@ from loadDataFluvius import loadFluviusData
 
 log = logging.getLogger(__name__)
 
-db_uri = "sqlite:///local_db/assume_db.db"
+db_uri = "sqlite:///sim/assume_db.db"
 
 world = World(database_uri=db_uri)
 
