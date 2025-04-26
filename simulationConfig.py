@@ -38,7 +38,7 @@ def save_demand_units(path: str, num_agents: int):
     # Load Agent0
     columns_to_remove = ['Datetime', 'Resolution code', 'Most recent P10', 'Most recent P90', 'Day-ahead 6PM forecast',
                          'Day-ahead 6PM P10', 'Day-ahead 6PM P90', 'Most recent forecast', 'Week-ahead forecast']
-    agent0 = loadCsv('MeasuredForecastedLoadAgent0.csv', columns_to_remove)
+    agent0 = loadCsv('./data/MeasuredForecastedLoadAgent0.csv', columns_to_remove)
 
     # Load Fluvius meter data
     meters = loadFluviusData(num_agents - 1)  # Load data for the other agents

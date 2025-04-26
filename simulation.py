@@ -20,7 +20,7 @@ def run_simulation(num_agents):
 
     # Init World
     start = time.perf_counter()
-    world = World(database_uri=db_uri, export_csv_path="./data")
+    world = World(database_uri=db_uri, export_csv_path="./sim")
     print(f"World creation time: {time.perf_counter() - start:.3f} sec")
 
     # Load Scenario
