@@ -3,8 +3,8 @@ import pandas as pd
 import yaml
 
 
-from loadDataFluvius import loadFluviusData
-from loadCsv import loadCsv
+from loadFiles.loadDataFluvius import loadFluviusData
+from loadFiles.loadCsv import loadCsv
 
 def save_powerplant_units(path):
     powerplant_units_data = {
