@@ -36,39 +36,29 @@ def run_simulation(num_agents):
 
 
 def main():
-    # ---- choose one: yappi / cProfile / raw run ----
-
-    # Just run normally:
-    # run_simulation(5)
+    # Just run normally: (no simulation with 1 agent)
+    #run_simulation(10)
 
     # OR: run with yappi profiling
-    yappi.set_clock_type("WALL")
-    with yappi.run():
-         run_simulation(5)
-    yappi.get_func_stats().save("profileWALL.prof", type="pstat")
-
-    # different code - 285 s - aggretate_step_amount 36.8 s
-    # Assume code -
-
-
-    # OR: run with cProfile (much slower, not ideal for big runs)
-    # import cProfile
-    # import pstats
-    # with cProfile.Profile() as pr:
-    #     run_simulation()
-    # stats = pstats.Stats(pr)
-    # stats.dump_stats("cprofile_results.prof")
-
+    #yappi.set_clock_type("WALL")
+    #with yappi.run():
+    #     run_simulation(10)
+    # p = profile, WALL, nc = no changes, 10 = agents
+    #yappi.get_func_stats().save("profiles/p_WALL_cashflow_10.prof", type="pstat")
 
 if __name__ == "__main__":
     main()
 
-# Execution time of simulation of year with 10 agents: 240 s
-# Execution time of simulation of year with 15 agents: 311 s
-# Execution time of simulation of year with 20 agents: 406 s
+# Execution time of simulation of year with 10 agents: 217, 218 s
+# Execution time of simulation of year with 10 agents speedup cashflow: 225, 216, 217 s
 
-# cProfile generates immense amounts of overhead -> double the time
-# yappi also generates significant amount overhead
+# Execution time of simulation of year with 15 agents: 311 s
+
+# Execution time of simulation of year with 20 agents: 318 s
+# Execution time of simulation of year with 20 agents speedup cashflow: 331 s
+
+
+# yappi generates significant amount overhead
 
 # 20 agent, 1 year, 1 - 2 - 3 - 4 core = 357 s - 344 s - 333 - 348
-# time difference with cores may be negligible
+# 3 cores is optimal
