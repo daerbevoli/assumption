@@ -13,7 +13,7 @@ def save_powerplant_units(path):
         "bidding_EOM": ["naive_eom"] * 5,
         "fuel_type": ["uranium", "methane", "wind", "bio", "solar"],
         "emission_factor": [0.0, 0.4, 0.3, 0.2, 0.0],
-        "max_power": [1000.0, 8000.0, 10.0, 100.0, None],
+        "max_power": [1000.0, 8000.0, 10.0, 100.0, 100],
         "min_power": [200.0, 200.0, 1.0, 10.0, 0.0],
         "efficiency": [0.3, 0.5, 0.4, 0.6, 1.0],
         "additional_cost": [10.3, 1.65, 1.3, 3.5, 0],
@@ -40,18 +40,29 @@ def save_demand_units(path: str, num_agents: int):
                          'Day-ahead 6PM P10', 'Day-ahead 6PM P90', 'Most recent forecast', 'Week-ahead forecast']
     agent0 = loadCsv('./data/MeasuredForecastedLoadAgent0.csv', columns_to_remove)
 
-    # Load Fluvius meter data
-    meters = loadFluviusData(num_agents - 1)  # Load data for the other agents
+    if num_agents > 1:
+        # Load Fluvius meter data
+        meters = loadFluviusData(num_agents - 1)  # Load data for the other agents
 
-    # Create demand unit data
-    demand_units_data = {
-        "name": ["Agent0"] + [f"Resident{i + 1}" for i in range(num_agents - 1)],
-        "technology": ["demand"] * num_agents,
-        "bidding_EOM": ["naive_eom"] * num_agents,
-        "max_power": [10000] + [1] * (num_agents - 1),  # Assign random max power
-        "min_power": [0] * num_agents,
-        "unit_operator": ["eom_be"] * num_agents,
-    }
+        # Create demand unit data
+        demand_units_data = {
+            "name": ["Agent0"] + [f"Resident{i + 1}" for i in range(num_agents - 1)],
+            "technology": ["demand"] * num_agents,
+            "bidding_EOM": ["naive_eom"] * num_agents,
+            "max_power": [10000] + [1] * (num_agents - 1),  # Assign random max power
+            "min_power": [0] * num_agents,
+            "unit_operator": ["eom_be"] * num_agents,
+        }
+    else:
+        # Create demand unit data
+        demand_units_data = {
+            "name": ["Agent0"],
+            "technology": ["demand"],
+            "bidding_EOM": ["naive_eom"],
+            "max_power": [10000],  # Assign random max power
+            "min_power": [0],
+            "unit_operator": ["eom_be"],
+        }
 
     # Convert to DataFrame and save
     demand_units_df = pd.DataFrame(demand_units_data)

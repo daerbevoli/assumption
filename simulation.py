@@ -37,26 +37,26 @@ def run_simulation(num_agents):
 
 def main():
     # Just run normally: (no simulation with 1 agent)
-    #run_simulation(10)
+    # run_simulation(5)
 
     # OR: run with yappi profiling
     #yappi.set_clock_type("WALL")
     #with yappi.run():
     #     run_simulation(10)
     # p = profile, WALL, nc = no changes, 10 = agents
-    #yappi.get_func_stats().save("profiles/p_WALL_cashflow_10.prof", type="pstat")
+    #yappi.get_func_stats().save("profiles/p_WALL_nc_10.prof", type="pstat")
 
 if __name__ == "__main__":
     main()
 
-# Execution time of simulation of year with 10 agents: 217, 218 s
-# Execution time of simulation of year with 10 agents speedup cashflow: 225, 216, 217 s
+# bottleneck 1: aggregate_step_amount
+# Test 1 : SortedList from sortedContainers -> slower by about 1.5
+# Test 2 : SortedKeyList -> even slower
+# QUESTION : Do I need to add all the attempts to my thesis or in a different report?
+# Test 3 : vectorization -> super slow
 
-# Execution time of simulation of year with 15 agents: 311 s
 
-# Execution time of simulation of year with 20 agents: 318 s
-# Execution time of simulation of year with 20 agents speedup cashflow: 331 s
-
+# Test 4 : calculate_cashflow optimization -> pretty much same time
 
 # yappi generates significant amount overhead
 
