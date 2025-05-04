@@ -2,10 +2,17 @@ import os
 import time
 import psutil
 import yappi
+import tracemalloc
+
+import cProfile
+import time
+import pstats
 
 from assume import World
 from assume.scenario.loader_csv import load_scenario_folder
 from simulationConfig import runConfig
+from pyinstrument import Profiler
+
 
 def run_simulation(num_agents):
 
@@ -36,15 +43,48 @@ def run_simulation(num_agents):
 
 
 def main():
-    # Just run normally: (no simulation with 1 agent)
-    # run_simulation(5)
 
-    # OR: run with yappi profiling
+    # Just run normally: (no simulation with 1 agent)
+    # run_simulation(2)
+
+    # tracemalloc memory profiling
+    # tracemalloc.start()
+    # run_simulation(10)
+    #
+    # snapshot = tracemalloc.take_snapshot()
+    # top_stats = snapshot.statistics('lineno')
+    #
+    # for stat in top_stats:
+    #     print(stat)
+
+    # pyinstrument time sampling profiler -> superficial
+    # profiler = Profiler()
+    # profiler.start()
+    #
+    # # Your code here
+    # run_simulation(50)
+    #
+    # profiler.stop()
+    # print(profiler.output_text(unicode=True, color=True))
+
+    # yappi time profiling
     #yappi.set_clock_type("WALL")
     #with yappi.run():
     #     run_simulation(10)
     # p = profile, WALL, nc = no changes, 10 = agents
     #yappi.get_func_stats().save("profiles/p_WALL_nc_10.prof", type="pstat")
+
+    # cProfile (only measures CPU time)
+    # profiler = cProfile.Profile()
+    # profiler.enable()
+    #
+    # run_simulation(10)
+    #
+    # profiler.disable()
+    #
+    # stats = pstats.Stats(profiler)
+    # stats.sort_stats(pstats.SortKey.CUMULATIVE)
+    # stats.print_stats()
 
 if __name__ == "__main__":
     main()
