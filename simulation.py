@@ -11,7 +11,6 @@ import pstats
 from assume import World
 from assume.scenario.loader_csv import load_scenario_folder
 from simulationConfig import runConfig
-from pyinstrument import Profiler
 
 
 def run_simulation(num_agents):
@@ -67,11 +66,11 @@ def main():
     # print(profiler.output_text(unicode=True, color=True))
 
     # yappi time profiling
-    #yappi.set_clock_type("WALL")
-    #with yappi.run():
+    # yappi.set_clock_type("WALL")
+    # with yappi.run():
     #     run_simulation(10)
-    # p = profile, WALL, nc = no changes, 10 = agents
-    #yappi.get_func_stats().save("profiles/p_WALL_nc_10.prof", type="pstat")
+    # # p = profile, WALL, nc = no changes, 10 = agents
+    # yappi.get_func_stats().save("profiles/p_WALL_1DaySimWith3Agents.prof", type="pstat")
 
     # cProfile (only measures CPU time)
     # profiler = cProfile.Profile()
