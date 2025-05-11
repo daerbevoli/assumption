@@ -34,7 +34,6 @@ def run_simulation(num_agents):
     start = time.perf_counter()
     load_scenario_folder(world, inputs_path="./sim", scenario="units", study_case="Day_Ahead_market")
     print(f"Scenario load time: {time.perf_counter() - start:.3f} sec")
-
     # RUN simulation
     start = time.perf_counter()
     world.run()
@@ -45,7 +44,7 @@ def run_simulation(num_agents):
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    # run_simulation(2)
+    run_simulation(2)
 
     # tracemalloc memory profiling
     # tracemalloc.start()
