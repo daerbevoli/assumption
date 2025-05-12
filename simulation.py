@@ -43,7 +43,15 @@ def run_simulation(num_agents):
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    run_simulation(2)
+    run_simulation(500)
+    # wc
+    # 5 = 77 s
+    # 10 = 84 s
+    # 20 = 104 s
+    # 50 = 154 s
+    # 100 = 269 s
+    # 500 = 1012
+    # 1000
 
     # tracemalloc memory profiling
     # tracemalloc.start()
