@@ -7,6 +7,7 @@ import tracemalloc
 import cProfile
 import time
 import pstats
+from pyinstrument import Profiler
 
 from assume import World
 from assume.scenario.loader_csv import load_scenario_folder
@@ -43,44 +44,44 @@ def run_simulation(num_agents):
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    run_simulation(500)
+    #run_simulation(500)
+    # error running
     # wc
     # 5 = 77 s
     # 10 = 84 s
     # 20 = 104 s
     # 50 = 154 s
     # 100 = 269 s
-    # 500 = 1012
+    # 500 = 1012 s
     # 1000
 
     # tracemalloc memory profiling
-    # tracemalloc.start()
-    # run_simulation(10)
-    #
-    # snapshot = tracemalloc.take_snapshot()
-    # top_stats = snapshot.statistics('lineno')
-    #
-    # for stat in top_stats:
-    #     print(stat)
+    tracemalloc.start()
 
-    # pyinstrument time sampling profiler -> superficial
-    # profiler = Profiler()
-    # profiler.start()
-    #
-    # # Your code here
-    # run_simulation(50)
-    #
-    # profiler.stop()
-    # print(profiler.output_text(unicode=True, color=True))
+    # ... run your application ...
+    run_simulation(10)
+
+    snapshot = tracemalloc.take_snapshot()
+    top_stats = snapshot.statistics('lineno')
+
+    print("[ Top 20 ]")
+    for stat in top_stats[:20]:
+        print(stat)
+
+    # Get memory usage in kilobytes
+    #current, peak = tracemalloc.get_traced_memory()
+    #print(f"Current memory usage: {current / 1024 / 1024:.2f} MB")
+    # print(f"Peak memory usage: {peak / 1024 / 1024:.2f} MB")
 
     # yappi time profiling
     # yappi.set_clock_type("WALL")
     # with yappi.run():
     #     run_simulation(10)
     # # p = profile, WALL, nc = no changes, 10 = agents
-    # yappi.get_func_stats().save("profiles/p_WALL_1DaySimWith3Agents.prof", type="pstat")
+    # yappi.get_func_stats().save("profiles/yappi_nc_10.prof", type="pstat")
+    # 10 agents = 440 s
 
-    # cProfile (only measures CPU time)
+    # cProfiler
     # profiler = cProfile.Profile()
     # profiler.enable()
     #
@@ -88,8 +89,10 @@ def main():
     #
     # profiler.disable()
     #
+    # profiler.dump_stats("profiles/cProfile_nc_10.prof")
+    #
     # stats = pstats.Stats(profiler)
-    # stats.sort_stats(pstats.SortKey.CUMULATIVE)
+    # stats.sort_stats(pstats.SortKey.TIME)
     # stats.print_stats()
 
 if __name__ == "__main__":
