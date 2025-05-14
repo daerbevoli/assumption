@@ -44,7 +44,7 @@ def run_simulation(num_agents):
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    #run_simulation(500)
+    run_simulation(100)
     # error running
     # wc
     # 5 = 77 s
@@ -56,17 +56,17 @@ def main():
     # 1000
 
     # tracemalloc memory profiling
-    tracemalloc.start()
-
-    # ... run your application ...
-    run_simulation(10)
-
-    snapshot = tracemalloc.take_snapshot()
-    top_stats = snapshot.statistics('lineno')
-
-    print("[ Top 20 ]")
-    for stat in top_stats[:20]:
-        print(stat)
+    # tracemalloc.start()
+    #
+    # # ... run your application ...
+    # run_simulation(10)
+    #
+    # snapshot = tracemalloc.take_snapshot()
+    # top_stats = snapshot.statistics('lineno')
+    #
+    # print("[ Top 20 ]")
+    # for stat in top_stats[:20]:
+    #     print(stat)
 
     # Get memory usage in kilobytes
     #current, peak = tracemalloc.get_traced_memory()

@@ -8,12 +8,12 @@ from loadFiles.loadCsv import loadCsv
 
 def save_powerplant_units(path):
     powerplant_units_data = {
-        "name": ["nuclear", "natural gas", "wind", "biofuel", "solar"],
-        "technology": ["nuclear", "methane", "wind", "bio", "solar"],
+        "name": ["nuclear", "fossil fuel", "wind", "biofuel", "solar"],
+        "technology": ["nuclear", "natural gas/other", "wind", "bio", "solar"],
         "bidding_EOM": ["naive_eom"] * 5,
         "fuel_type": ["uranium", "methane", "wind", "bio", "solar"],
         "emission_factor": [0.0, 0.5, 0.0, 0.2, 0.0],
-        "max_power": [6000, 3000, 1500, 600, 800],
+        "max_power": [5009, 2968, 1409, 563, 785],
         "min_power": [100.0, 100.0, 1.0, 10.0, 1.0],
         "efficiency": [0.4, 0.5, 0.4, 0.3, 0.2],
         "additional_cost": [0, 0, 5, 0, 5],
@@ -64,7 +64,7 @@ def save_demand_units(path: str, num_agents: int):
 
     # Add demand from Fluvius meters
     for i, meter in enumerate(meters):
-        agents_demand[f"Resident{i + 1}"] = meter["load"]
+        agents_demand[f"Resident{i + 1}"] = meter["load"] - meter["feedin"]
 
     # Save demand data to CSV
     agents_demand.to_csv(f"{path}/demand_df.csv", index=True)
@@ -76,7 +76,7 @@ def save_config(path):
     config_data = {
         "Day_Ahead_market": {
             "start_date": "2022-01-01 00:00:00",
-            "end_date": "2022-12-31 23:59:59",
+            "end_date": "2022-01-10 23:59:59",
             "time_step": "1h",
             "save_frequency_hours": 1,
             "markets_config": {

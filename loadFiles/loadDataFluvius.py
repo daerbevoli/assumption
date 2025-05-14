@@ -21,7 +21,7 @@ def loadFluviusData(amountToFilter: int):
     meters = []
     # load the agent with the profile
     for (iid, profile, metadata) in dmkdataset.get_profiles():
-        profile[['load', 'feedin']] = profile[['load', 'feedin']] * 1e-3  # Convert kWh to MW
+        profile[['load', 'feedin']] = profile[['load', 'feedin']] * 1e-3  # Convert kWh to MWh
         meters.append(profile)
 
     return meters
