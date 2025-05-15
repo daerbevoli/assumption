@@ -76,7 +76,7 @@ def save_config(path):
     config_data = {
         "Day_Ahead_market": {
             "start_date": "2022-01-01 00:00:00",
-            "end_date": "2022-01-10 23:59:59",
+            "end_date": "2022-12-31 23:59:59",
             "time_step": "1h",
             "save_frequency_hours": 1,
             "markets_config": {
