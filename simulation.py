@@ -7,13 +7,18 @@ import tracemalloc
 import cProfile
 import time
 import pstats
-from pyinstrument import Profiler
 
 from assume import World
 from assume.scenario.loader_csv import load_scenario_folder
 from simulationConfig import runConfig
 
+from memory_profiler import profile
 
+
+import time
+import tracemalloc
+
+@profile
 def run_simulation(num_agents):
 
     # CONFIG
@@ -40,11 +45,33 @@ def run_simulation(num_agents):
     end = time.perf_counter()
     print(f"Simulation time: {end - start:.3f} sec")
 
+def analyze_yappi(type: str, agents: int, saveProfile: str):
+    yappi.set_clock_type(type)
+    with yappi.run():
+        run_simulation(agents)
+    # p = profile, WALL, nc = no changes, 10 = agents
+    yappi.get_func_stats().save("profiles/" + saveProfile + ".prof", type="pstat")
+    # 10 agents = 440 s
+
+
+def analyze_cProfile(agents: int, saveProfile: str):
+    profiler = cProfile.Profile()
+    profiler.enable()
+
+    run_simulation(agents)
+
+    profiler.disable()
+
+    profiler.dump_stats("profiles/" + saveProfile + ".prof")
+
+    stats = pstats.Stats(profiler)
+    stats.sort_stats(pstats.SortKey.TIME)
+    stats.print_stats()
 
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    run_simulation(100)
+    run_simulation(500)
     # error running
     # wc
     # 5 = 77 s
@@ -55,45 +82,11 @@ def main():
     # 500 = 1012 s
     # 1000
 
-    # tracemalloc memory profiling
-    # tracemalloc.start()
-    #
-    # # ... run your application ...
-    # run_simulation(10)
-    #
-    # snapshot = tracemalloc.take_snapshot()
-    # top_stats = snapshot.statistics('lineno')
-    #
-    # print("[ Top 20 ]")
-    # for stat in top_stats[:20]:
-    #     print(stat)
-
-    # Get memory usage in kilobytes
-    #current, peak = tracemalloc.get_traced_memory()
-    #print(f"Current memory usage: {current / 1024 / 1024:.2f} MB")
-    # print(f"Peak memory usage: {peak / 1024 / 1024:.2f} MB")
-
     # yappi time profiling
-    # yappi.set_clock_type("WALL")
-    # with yappi.run():
-    #     run_simulation(10)
-    # # p = profile, WALL, nc = no changes, 10 = agents
-    # yappi.get_func_stats().save("profiles/yappi_nc_10.prof", type="pstat")
-    # 10 agents = 440 s
+    # analyze_yappi("WALL", 10, "yappi")
 
     # cProfiler
-    # profiler = cProfile.Profile()
-    # profiler.enable()
-    #
-    # run_simulation(10)
-    #
-    # profiler.disable()
-    #
-    # profiler.dump_stats("profiles/cProfile_nc_10.prof")
-    #
-    # stats = pstats.Stats(profiler)
-    # stats.sort_stats(pstats.SortKey.TIME)
-    # stats.print_stats()
+    # analyze_cProfile(10, "cProfile")
 
 if __name__ == "__main__":
     main()
