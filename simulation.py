@@ -71,7 +71,7 @@ def analyze_cProfile(agents: int, saveProfile: str):
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    # run_simulation(500)
+    run_simulation(10)
     # error running
     # wc
     # 5 = 77 s
@@ -83,7 +83,7 @@ def main():
     # 1000
 
     # yappi time profiling
-    analyze_yappi("WALL", 10, "p_nc_10_wall")
+    #analyze_yappi("WALL", 10, "p_nc_10_wall")
 
     # cProfiler
     # analyze_cProfile(10, "cProfile")
