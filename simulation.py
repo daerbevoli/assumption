@@ -8,8 +8,8 @@ import cProfile
 import time
 import pstats
 
-from assume import World
-from assume.scenario.loader_csv import load_scenario_folder
+from assume.world import World
+from assume.scenario.loader_csv import (load_scenario_folder)
 from simulationConfig import runConfig
 
 from memory_profiler import profile
@@ -71,7 +71,12 @@ def analyze_cProfile(agents: int, saveProfile: str):
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    run_simulation(10)
+    run_simulation(20)
+
+    # simulation run with optimization is 10 - 154 s, 20 - 194 / 188, 30 - 248, 50 - 323
+    # without 10 - 154 s, 20 - 219 / 191, 30 - 241, 50 - 318
+    # -> to test on a faster computer for better results and verify with yappi
+
     # error running
     # wc
     # 5 = 77 s
@@ -87,6 +92,7 @@ def main():
 
     # cProfiler
     # analyze_cProfile(10, "cProfile")
+
 
 if __name__ == "__main__":
     main()

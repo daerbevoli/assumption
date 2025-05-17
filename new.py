@@ -7,9 +7,9 @@ from dateutil import rrule as rr
 
 import pandas as pd
 
-from assume import World
-from assume.common.forecasts import NaiveForecast
-from assume.common.market_objects import MarketConfig, MarketProduct
+from assume2 import World
+from assume2.common.forecasts import NaiveForecast
+from assume2.common.market_objects import MarketConfig, MarketProduct
 
 from loadCsv import loadCsv
 from loadDataFluvius import loadFluviusData

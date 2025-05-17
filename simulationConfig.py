@@ -26,7 +26,7 @@ def save_fuel_prices(path):
     # Create the data
     fuel_prices_data = {
         "fuel": ["uranium", "natural gas", "biomass", "co2"],
-        "price": [1.5, 70, 60, 80],
+        "price": [5, 70, 60, 80],
     }
 
     # Convert to DataFrame and save as CSV
