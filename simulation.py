@@ -18,6 +18,7 @@ from memory_profiler import profile
 import time
 import tracemalloc
 
+
 #@profile
 def run_simulation(num_agents):
 
@@ -68,11 +69,48 @@ def analyze_cProfile(agents: int, saveProfile: str):
     stats.sort_stats(pstats.SortKey.TIME)
     stats.print_stats()
 
+
+def analyze_tracemalloc(agents: int):
+    def format_size(size_bytes):
+        return f"{size_bytes / 1024:.2f} KiB"
+
+    def analyze_memory(snapshot_before, snapshot_after, top_n=10):
+        print(f"\n🔍 Top {top_n} memory differences by traceback:")
+        stats = snapshot_after.compare_to(snapshot_before, 'traceback')
+        for stat in stats[:top_n]:
+            print(f"\n📌 {format_size(stat.size_diff)} in {stat.count_diff} blocks")
+            for line in stat.traceback.format():
+                print(f"  {line}")
+
+        print(f"\n📍 Top {top_n} allocations by file and line:")
+        stats_by_line = snapshot_after.statistics('lineno')
+        for stat in stats_by_line[:top_n]:
+            print(f"{format_size(stat.size)}: {stat.traceback}")
+
+    print("🚀 Starting memory profiling...")
+    tracemalloc.start(25)  # 25 frames of stack for deeper tracebacks
+
+    snapshot_before = tracemalloc.take_snapshot()
+    start_time = time.time()
+
+    run_simulation(agents)
+
+    elapsed = time.time() - start_time
+    snapshot_after = tracemalloc.take_snapshot()
+
+    current, peak = tracemalloc.get_traced_memory()
+    print(f"\n⏱️  Simulation time: {elapsed:.2f} sec")
+    print(f"📊 Current memory usage: {format_size(current)}")
+    print(f"📈 Peak memory usage: {format_size(peak)}")
+
+    analyze_memory(snapshot_before, snapshot_after)
+
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    run_simulation(20)
-
+    #run_simulation(200)
+    # opt : 10 - 81, 20 - 95, 50 - 153, 100 - 249, 200 - 448/454/443 450
+    # no : 10 - 135/82, 20 - 99, 50 - 156, 100 - 250, 200 - 482/473/474 475
     # simulation run with optimization is 10 - 154 s, 20 - 194 / 188, 30 - 248, 50 - 323
     # without 10 - 154 s, 20 - 219 / 191, 30 - 241, 50 - 318
     # -> to test on a faster computer for better results and verify with yappi
@@ -92,6 +130,9 @@ def main():
 
     # cProfiler
     # analyze_cProfile(10, "cProfile")
+
+    # tracemalloc
+    analyze_tracemalloc(10)
 
 
 if __name__ == "__main__":

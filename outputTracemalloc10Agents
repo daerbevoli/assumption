@@ -1,0 +1,333 @@
+Scenario load time: 89.853 sec
+units_Day_Ahead_market 2022-12-31 00:00:00: 100%|█████████▉| 31449601/31535999 [56:21<00:09, 9299.63it/s]
+Simulation time: 3457.158 sec
+
+⏱️  Simulation time: 3722.42 sec
+📊 Current memory usage: 146606.70 KiB
+📈 Peak memory usage: 558641.26 KiB
+
+🔍 Top 10 memory differences by traceback:
+
+📌 95004.00 KiB in 419328 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 45
+      world.run()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\world.py", line 727
+      return self.loop.run_until_complete(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 92
+      self._run_once()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 133
+      handle._run()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88
+      self._context.run(self._callback, *self._args)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 396
+      self.__step()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 303
+      self.__step_run_and_handle_result(exc)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 314
+      result = coro.send(None)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\mango\util\scheduling.py", line 211
+      return await self._coro
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\base_market.py", line 633
+      (accepted_orderbook, rejected_orderbook, market_meta, flows) = self.clear(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py", line 172
+      calculate_meta(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py", line 30
+      return {
+
+📌 8190.00 KiB in 209664 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 45
+      world.run()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\world.py", line 727
+      return self.loop.run_until_complete(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 92
+      self._run_once()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 133
+      handle._run()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88
+      self._context.run(self._callback, *self._args)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 396
+      self.__step()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 303
+      self.__step_run_and_handle_result(exc)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 314
+      result = coro.send(None)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\mango\util\scheduling.py", line 211
+      return await self._coro
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\base_market.py", line 239
+      products = get_available_products(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\common\utils.py", line 98
+      period_end = start + product.duration * (i + 1)
+
+📌 8190.00 KiB in 209664 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 45
+      world.run()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\world.py", line 727
+      return self.loop.run_until_complete(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 92
+      self._run_once()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 133
+      handle._run()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88
+      self._context.run(self._callback, *self._args)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 396
+      self.__step()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 303
+      self.__step_run_and_handle_result(exc)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 314
+      result = coro.send(None)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\mango\util\scheduling.py", line 211
+      return await self._coro
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\base_market.py", line 239
+      products = get_available_products(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\common\utils.py", line 97
+      period_start = start + product.duration * i
+
+📌 4914.00 KiB in 209664 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 45
+      world.run()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\world.py", line 727
+      return self.loop.run_until_complete(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 92
+      self._run_once()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 133
+      handle._run()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88
+      self._context.run(self._callback, *self._args)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 396
+      self.__step()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 303
+      self.__step_run_and_handle_result(exc)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 314
+      result = coro.send(None)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\mango\util\scheduling.py", line 211
+      return await self._coro
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\base_market.py", line 633
+      (accepted_orderbook, rejected_orderbook, market_meta, flows) = self.clear(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py", line 172
+      calculate_meta(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py", line 34
+      "supply_volume_energy": supply_volume * duration_hours,
+
+📌 4914.00 KiB in 209664 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 45
+      world.run()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\world.py", line 727
+      return self.loop.run_until_complete(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 92
+      self._run_once()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 133
+      handle._run()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88
+      self._context.run(self._callback, *self._args)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 396
+      self.__step()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 303
+      self.__step_run_and_handle_result(exc)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 314
+      result = coro.send(None)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\mango\util\scheduling.py", line 211
+      return await self._coro
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\base_market.py", line 633
+      (accepted_orderbook, rejected_orderbook, market_meta, flows) = self.clear(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py", line 172
+      calculate_meta(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py", line 33
+      "demand_volume_energy": demand_volume * duration_hours,
+
+📌 1784.22 KiB in 1 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 45
+      world.run()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\world.py", line 727
+      return self.loop.run_until_complete(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 92
+      self._run_once()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\nest_asyncio.py", line 133
+      handle._run()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88
+      self._context.run(self._callback, *self._args)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 396
+      self.__step()
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 303
+      self.__step_run_and_handle_result(exc)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 314
+      result = coro.send(None)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\mango\util\scheduling.py", line 211
+      return await self._coro
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\base_market.py", line 707
+      self.results.append(meta)
+
+📌 1439.45 KiB in 61 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 41
+      load_scenario_folder(world, inputs_path="./sim", scenario="units", study_case="Day_Ahead_market")
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\scenario\loader_csv.py", line 833
+      setup_world(world=world)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\scenario\loader_csv.py", line 616
+      scenario_data = copy.deepcopy(world.scenario_data)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 136
+      y = copier(x, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 221
+      y[deepcopy(key, memo)] = deepcopy(value, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 162
+      y = _reconstruct(x, memo, *rv)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 259
+      state = deepcopy(state, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 136
+      y = copier(x, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 221
+      y[deepcopy(key, memo)] = deepcopy(value, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 136
+      y = copier(x, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 221
+      y[deepcopy(key, memo)] = deepcopy(value, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 162
+      y = _reconstruct(x, memo, *rv)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 259
+      state = deepcopy(state, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 136
+      y = copier(x, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 221
+      y[deepcopy(key, memo)] = deepcopy(value, memo)
+    File "C:\Users\samee\AppData\Local\Programs\Python\Python312\Lib\copy.py", line 143
+      y = copier(memo)
+
+📌 1439.16 KiB in 42 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 41
+      load_scenario_folder(world, inputs_path="./sim", scenario="units", study_case="Day_Ahead_market")
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\scenario\loader_csv.py", line 829
+      world.scenario_data = load_config_and_create_forecaster(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\scenario\loader_csv.py", line 574
+      forecaster.convert_forecasts_to_fast_series()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\common\forecasts.py", line 671
+      fast_forecasts[column_name] = FastSeries.from_pandas_series(forecast_series)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\common\fast_pandas.py", line 897
+      return FastSeries(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\common\fast_pandas.py", line 317
+      else np.array(value, dtype=np.float64)
+
+📌 1233.56 KiB in 36 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 31
+      runConfig(path, num_agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulationConfig.py", line 102
+      save_demand_units(input_path, num_agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulationConfig.py", line 44
+      meters = loadFluviusData(num_agents - 1)  # Load data for the other agents
+    File "C:\Users\samee\PycharmProjects\assumption\loadFiles\loadDataFluvius.py", line 24
+      profile[['load', 'feedin']] = profile[['load', 'feedin']] * 1e-3  # Convert kWh to MWh
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\pandas\core\frame.py", line 4299
+      self._setitem_array(key, value)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\pandas\core\frame.py", line 4343
+      self[k1] = value[k2]
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\pandas\core\frame.py", line 4311
+      self._set_item(key, value)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\pandas\core\frame.py", line 4524
+      value, refs = self._sanitize_column(value)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\pandas\core\frame.py", line 5263
+      return _reindex_for_setitem(value, self.index)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\pandas\core\frame.py", line 12683
+      return value._values.copy(), None
+
+📌 1232.16 KiB in 7 blocks
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 139
+      main()
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 135
+      analyze_tracemalloc(10)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 96
+      run_simulation(agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulation.py", line 31
+      runConfig(path, num_agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulationConfig.py", line 102
+      save_demand_units(input_path, num_agents)
+    File "C:\Users\samee\PycharmProjects\assumption\simulationConfig.py", line 44
+      meters = loadFluviusData(num_agents - 1)  # Load data for the other agents
+    File "C:\Users\samee\PycharmProjects\assumption\loadFiles\loadDataFluvius.py", line 16
+      dmkdataset = dmkdataset.filter(n=amountToFilter).resample('h')
+    File "C:\Users\samee\PycharmProjects\assumption\wondergrid\datasets\smartmeter.py", line 29
+      profiles = self.profiles.resample(timestamp=frequency).mean()
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\core\_aggregations.py", line 5787
+      return self.reduce(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\core\resample.py", line 502
+      return super().reduce(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\core\groupby.py", line 1823
+      return self.map(reduce_dataset)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\core\resample.py", line 438
+      combined = self._combine(applied)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\core\groupby.py", line 1748
+      combined = concat(applied, dim)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\structure\concat.py", line 277
+      return _dataset_concat(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\structure\concat.py", line 669
+      combined_var = concat_vars(
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\core\variable.py", line 3000
+      return Variable.concat(variables, dim, positions, shortcut, combine_attrs)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\core\variable.py", line 1729
+      data = duck_array_ops.concatenate(arrays, axis=axis)
+    File "C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\xarray\core\duck_array_ops.py", line 419
+      return xp.concat(as_shared_dtype(arrays, xp=xp), axis=axis)
+
+📍 Top 10 allocations by file and line:
+95004.00 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py:30
+8190.00 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\common\utils.py:98
+8190.00 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\common\utils.py:97
+6100.66 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\numpy\_core\numeric.py:352
+4914.00 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py:34
+4914.00 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\clearing_algorithms\simple.py:33
+1919.66 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\pandas\core\frame.py:12683
+1784.22 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\markets\base_market.py:707
+1627.63 KiB: <frozen importlib._bootstrap_external>:753
+1439.50 KiB: C:\Users\samee\PycharmProjects\assumption\.venv\Lib\site-packages\assume\common\fast_pandas.py:317
+
+Process finished with exit code 0
