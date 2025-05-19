@@ -259,7 +259,9 @@ def visualize_orderbook(order_book: Orderbook):
     plt.ylabel("MW")
     plt.show()
 
+import random
 
+# ASSUME
 def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=None):
     """
     Step function with bought volume, allows setting timeframe through begin and end, and group by columns in groupby.
@@ -315,6 +317,10 @@ def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=No
                 end = date + timedelta(hours=duration_hours)
                 deltas.append((start, bid["volume"]) + add)
                 deltas.append((end, -bid["volume"]) + add)
+
+    # #print(deltas)
+    # random.shuffle(deltas)
+    # #print(deltas)
     aggregation = defaultdict(list)
     # current_power is separated by group
     current_power = defaultdict(lambda: 0)
@@ -337,6 +343,59 @@ def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=No
 
     return [j for sub in list(aggregation.values()) for j in sub]
 
+
+# opt
+
+# def aggregate_step_amount(orderbook, begin=None, end=None, groupby=None):
+#     if groupby is None:
+#         groupby = []
+#     deltas = []
+#
+#     for bid in orderbook:
+#         add = tuple(bid[field] for field in groupby)
+#         accepted = bid["accepted_volume"]
+#         if bid["only_hours"] is None and not isinstance(accepted, dict):
+#             deltas.append((bid["start_time"], accepted, add))
+#             deltas.append((bid["end_time"], -accepted, add))
+#         elif isinstance(accepted, dict):
+#             start_hour = bid["start_time"]
+#             end_hour = bid["end_time"]
+#             duration = (start_hour - end_hour) / len(accepted)
+#             for key, val in accepted.items():
+#                 deltas.append((key, val, add))
+#                 deltas.append((key + duration, -val, add))
+#         else:
+#             start_hour, end_hour = bid["only_hours"]
+#             duration_hours = end_hour - start_hour
+#             if duration_hours <= 0:
+#                 duration_hours += 24
+#             starts = rr.rrule(
+#                 rr.DAILY,
+#                 dtstart=bid["start_time"],
+#                 byhour=start_hour,
+#                 until=bid["end_time"],
+#             )
+#             for date in starts:
+#                 start = date
+#                 end_time = date + timedelta(hours=duration_hours)
+#                 deltas.append((start, bid["volume"], add))
+#                 deltas.append((end_time, -bid["volume"], add))
+#
+#     random.shuffle(deltas)
+#
+#     aggregation = defaultdict(list)
+#     current_power = defaultdict(lambda: 0)
+#
+#     deltas.sort(key=lambda x: x[0])
+#     for time, delta, groupdata in deltas:
+#         current_power[groupdata] += delta
+#         if (not begin or time >= begin) and (not end or time < end):
+#             if aggregation[groupdata] and aggregation[groupdata][-1][0] == time:
+#                 aggregation[groupdata][-1][1] = current_power[groupdata]
+#             else:
+#                 aggregation[groupdata].append([time, current_power[groupdata], *groupdata])
+#
+#     return [item for sublist in aggregation.values() for item in sublist]
 
 def separate_orders(orderbook: Orderbook):
     """

@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from typing import TypedDict
 
 import numpy as np
+import pandas as pd
 
 from assume.common.fast_pandas import FastSeries, TensorFastSeries
 from assume.common.forecasts import Forecaster
@@ -275,36 +276,57 @@ class BaseUnit:
             "unit_type": "base_unit",
         }
 
-    def calculate_cashflow(self, product_type: str, orderbook: Orderbook):
-        """
-        Calculates the cashflow for the given product type.
+    # def calculate_cashflow(self, product_type: str, orderbook: Orderbook):
+    #     """
+    #     Calculates the cashflow for the given product type.
+    #
+    #     Args:
+    #         product_type: The product type.
+    #         orderbook: The orderbook.
+    #     """
+    #     for order in orderbook:
+    #         start = order["start_time"]
+    #         end = order["end_time"]
+    #         # end includes the end of the last product, to get the last products' start time we deduct the frequency once
+    #         end_excl = end - self.index.freq
+    #
+    #         if isinstance(order["accepted_volume"], dict):
+    #             cashflow = np.array(
+    #                 [
+    #                     float(order["accepted_price"][i] * order["accepted_volume"][i])
+    #                     for i in order["accepted_volume"].keys()
+    #                 ]
+    #             )
+    #         else:
+    #             cashflow = float(
+    #                 order.get("accepted_price", 0) * order.get("accepted_volume", 0)
+    #             )
+    #
+    #         elapsed_intervals = (end - start) / self.index.freq
+    #         self.outputs[f"{product_type}_cashflow"].loc[start:end_excl] += (
+    #             cashflow * elapsed_intervals
+    #         )
 
-        Args:
-            product_type: The product type.
-            orderbook: The orderbook.
-        """
+    def calculate_cashflow(self, product_type: str, orderbook: Orderbook):
+        df_cashflow = FastSeries(value=0.0, index=self.index)
+
         for order in orderbook:
             start = order["start_time"]
             end = order["end_time"]
-            # end includes the end of the last product, to get the last products' start time we deduct the frequency once
             end_excl = end - self.index.freq
 
             if isinstance(order["accepted_volume"], dict):
-                cashflow = np.array(
-                    [
-                        float(order["accepted_price"][i] * order["accepted_volume"][i])
-                        for i in order["accepted_volume"].keys()
-                    ]
+                cashflow = sum(
+                    float(order["accepted_price"][i] * order["accepted_volume"][i])
+                    for i in order["accepted_volume"].keys()
                 )
             else:
-                cashflow = float(
-                    order.get("accepted_price", 0) * order.get("accepted_volume", 0)
-                )
+                cashflow = float(order["accepted_price"] * order["accepted_volume"])
 
             elapsed_intervals = (end - start) / self.index.freq
-            self.outputs[f"{product_type}_cashflow"].loc[start:end_excl] += (
-                cashflow * elapsed_intervals
-            )
+            df_cashflow.loc[start:end_excl] += cashflow * elapsed_intervals
+
+        self.outputs[f"{product_type}_cashflow"] += df_cashflow  # only once
 
     def get_starting_costs(self, op_time: int) -> float:
         """
