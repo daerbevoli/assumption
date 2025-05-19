@@ -8,8 +8,8 @@ import cProfile
 import time
 import pstats
 
-from assume.world import World
-from assume.scenario.loader_csv import (load_scenario_folder)
+from assume.assume.world import World
+from assume.assume.scenario.loader_csv import (load_scenario_folder)
 from simulationConfig import runConfig
 
 from memory_profiler import profile
@@ -108,7 +108,7 @@ def analyze_tracemalloc(agents: int):
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    #run_simulation(200)
+    run_simulation(5)
     # opt : 10 - 81, 20 - 95, 50 - 153, 100 - 249, 200 - 448/454/443 450
     # no : 10 - 135/82, 20 - 99, 50 - 156, 100 - 250, 200 - 482/473/474 475
     # simulation run with optimization is 10 - 154 s, 20 - 194 / 188, 30 - 248, 50 - 323
@@ -126,13 +126,13 @@ def main():
     # 1000
 
     # yappi time profiling
-    #analyze_yappi("WALL", 10, "p_nc_10_wall")
+    # analyze_yappi("WALL", 10, "p_nc_10_wall_3")
 
     # cProfiler
     # analyze_cProfile(10, "cProfile")
 
     # tracemalloc
-    analyze_tracemalloc(10)
+    # analyze_tracemalloc(10)
 
 
 if __name__ == "__main__":

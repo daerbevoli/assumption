@@ -7,12 +7,12 @@ from dateutil import rrule as rr
 
 import pandas as pd
 
-from assume2 import World
-from assume2.common.forecasts import NaiveForecast
-from assume2.common.market_objects import MarketConfig, MarketProduct
+from assume.assume import World
+from assume.assume.common.forecasts import NaiveForecast
+from assume.assume.common.market_objects import MarketConfig, MarketProduct
 
-from loadCsv import loadCsv
-from loadDataFluvius import loadFluviusData
+from loadFiles.loadCsv import loadCsv
+from loadFiles.loadDataFluvius import loadFluviusData
 
 
 log = logging.getLogger(__name__)
