@@ -8,8 +8,8 @@ import cProfile
 import time
 import pstats
 
-from assume.assume.world import World
-from assume.assume.scenario.loader_csv import (load_scenario_folder)
+from assume.world import World
+from assume.scenario.loader_csv import (load_scenario_folder)
 from simulationConfig import runConfig
 
 from memory_profiler import profile
