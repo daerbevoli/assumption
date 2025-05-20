@@ -307,30 +307,29 @@ class BaseUnit:
                 cashflow * elapsed_intervals
             )
 
-# Optimization:
-    # change small indexed
-    def calculate_cashflow(self, product_type: str, orderbook: Orderbook):
-        df_cashflow = FastSeries(value=0.0, index=self.index)
-
-        for order in orderbook:
-            start = order["start_time"]
-            end = order["end_time"]
-            end_excl = end - self.index.freq
-
-            if isinstance(order["accepted_volume"], dict):
-                cashflow = np.array(
-                    [
-                        float(order["accepted_price"][i] * order["accepted_volume"][i])
-                        for i in order["accepted_volume"].keys()
-                    ]
-                )
-            else:
-                cashflow = float(order["accepted_price"] * order["accepted_volume"])
-
-            elapsed_intervals = (end - start) / self.index.freq
-            df_cashflow.loc[start:end_excl] += cashflow * elapsed_intervals
-
-        self.outputs[f"{product_type}_cashflow"] += df_cashflow  # only once
+# Optimization: change small indexed  writes by accumulating locally and performing a single update
+#     def calculate_cashflow(self, product_type: str, orderbook: Orderbook):
+#         df_cashflow = FastSeries(value=0.0, index=self.index)
+#
+#         for order in orderbook:
+#             start = order["start_time"]
+#             end = order["end_time"]
+#             end_excl = end - self.index.freq
+#
+#             if isinstance(order["accepted_volume"], dict):
+#                 cashflow = np.array(
+#                     [
+#                         float(order["accepted_price"][i] * order["accepted_volume"][i])
+#                         for i in order["accepted_volume"].keys()
+#                     ]
+#                 )
+#             else:
+#                 cashflow = float(order["accepted_price"] * order["accepted_volume"])
+#
+#             elapsed_intervals = (end - start) / self.index.freq
+#             df_cashflow.loc[start:end_excl] += cashflow * elapsed_intervals
+#
+#         self.outputs[f"{product_type}_cashflow"] += df_cashflow  # only once
 
     def get_starting_costs(self, op_time: int) -> float:
         """

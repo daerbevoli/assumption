@@ -261,125 +261,51 @@ def visualize_orderbook(order_book: Orderbook):
 
 import random
 
-# ASSUME
-def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=None):
-    """
-    Step function with bought volume, allows setting timeframe through begin and end, and group by columns in groupby.
-
-    Args:
-        orderbook (Orderbook): The orderbook.
-        begin (datetime, optional): The begin time. Defaults to None.
-        end (datetime, optional): The end time. Defaults to None.
-        groupby (list[str], optional): The columns to group by. Defaults to None.
-
-    Returns:
-        list[tuple[datetime, float, str, str]]: The aggregated orderbook timeseries.
-
-    Examples:
-        If called without groupby, this returns the aggregated orderbook timeseries
-    """
-
-    if groupby is None:
-        groupby = []
-    deltas = []
-
-    # first we are creating a list of tuples with the following form:
-    # start, delta_volume, bid_id, market_id
-    #print("len orderbook: ", len(orderbook))
-    for bid in orderbook:
-        #print("bid: ", bid)
-        add = ()
-        for field in groupby:
-            add += (bid[field],)
-        if bid["only_hours"] is None and not isinstance(bid["accepted_volume"], dict):
-            deltas.append((bid["start_time"], bid["accepted_volume"]) + add)
-            deltas.append((bid["end_time"], -bid["accepted_volume"]) + add)
-        elif isinstance(bid["accepted_volume"], dict):
-            start_hour = bid["start_time"]
-            end_hour = bid["end_time"]
-            duration = (end_hour - start_hour) / len(bid["accepted_volume"])
-            for key in bid["accepted_volume"].keys():
-                deltas.append((key, bid["accepted_volume"][key]) + add)
-                deltas.append((key + duration, -bid["accepted_volume"][key]) + add)
-        else:
-            # only_hours allows to have peak or off-peak bids
-            start_hour, end_hour = bid["only_hours"]
-            duration_hours = end_hour - start_hour
-            if duration_hours <= 0:
-                duration_hours += 24
-
-            starts = rr.rrule(
-                rr.DAILY,
-                dtstart=bid["start_time"],
-                byhour=start_hour,
-                until=bid["end_time"],
-            )
-            for date in starts:
-                start = date
-                end = date + timedelta(hours=duration_hours)
-                deltas.append((start, bid["volume"]) + add)
-                deltas.append((end, -bid["volume"]) + add)
-
-    #print("deltas: ", deltas)
-    #print("len: ", len(deltas))
-    # random.shuffle(deltas)
-    # #print(deltas)
-    aggregation = defaultdict(list)
-    # current_power is separated by group
-    current_power = defaultdict(lambda: 0)
-    for d_tuple in sorted(deltas, key=lambda i: i[0]):
-        time, delta, *groupdata = d_tuple
-        groupdata_str = "_".join(groupdata)
-        current_power[groupdata_str] += delta
-        #print("current_power: ", current_power[groupdata_str])
-        # we don't know what the power will be at "end" yet
-        # as a new order with this start point might be added
-        # afterwards - so the end is excluded here
-        # this also makes sure that each timestamp is only written
-        # once when iteratively calling this function
-        if (not begin or time >= begin) and (not end or time < end):
-            #print("yes")
-            #print("data: ", aggregation[groupdata_str])
-            if aggregation[groupdata_str] and aggregation[groupdata_str][-1][0] == time:
-            #    print("in second if loop")
-                aggregation[groupdata_str][-1][1] = current_power[groupdata_str]
-            #    print("aggregation in loop: ", aggregation[groupdata_str][-1][1])
-            else:
-                d_list = list(d_tuple)
-                d_list[1] = current_power[groupdata_str]
-                aggregation[groupdata_str].append(d_list)
-        #print("aggregation after: ", aggregation)
-        #print("len aggregartion: ", len(aggregation))
-
-    #print("output: ", [j for sub in list(aggregation.values()) for j in sub])
-    return [j for sub in list(aggregation.values()) for j in sub]
-
-
-# opt
-
-# def aggregate_step_amount(orderbook, begin=None, end=None, groupby=None):
+# ASSUME code
+# def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=None):
+#     """
+#     Step function with bought volume, allows setting timeframe through begin and end, and group by columns in groupby.
+#
+#     Args:
+#         orderbook (Orderbook): The orderbook.
+#         begin (datetime, optional): The begin time. Defaults to None.
+#         end (datetime, optional): The end time. Defaults to None.
+#         groupby (list[str], optional): The columns to group by. Defaults to None.
+#
+#     Returns:
+#         list[tuple[datetime, float, str, str]]: The aggregated orderbook timeseries.
+#
+#     Examples:
+#         If called without groupby, this returns the aggregated orderbook timeseries
+#     """
+#
 #     if groupby is None:
 #         groupby = []
 #     deltas = []
 #
+#     # first we are creating a list of tuples with the following form:
+#     # start, delta_volume, bid_id, market_id
 #     for bid in orderbook:
-#         add = tuple(bid[field] for field in groupby)
-#         accepted = bid["accepted_volume"]
-#         if bid["only_hours"] is None and not isinstance(accepted, dict):
-#             deltas.append((bid["start_time"], accepted, add))
-#             deltas.append((bid["end_time"], -accepted, add))
-#         elif isinstance(accepted, dict):
+#         add = ()
+#         for field in groupby:
+#             add += (bid[field],)
+#         if bid["only_hours"] is None and not isinstance(bid["accepted_volume"], dict):
+#             deltas.append((bid["start_time"], bid["accepted_volume"]) + add)
+#             deltas.append((bid["end_time"], -bid["accepted_volume"]) + add)
+#         elif isinstance(bid["accepted_volume"], dict):
 #             start_hour = bid["start_time"]
 #             end_hour = bid["end_time"]
-#             duration = (start_hour - end_hour) / len(accepted)
-#             for key, val in accepted.items():
-#                 deltas.append((key, val, add))
-#                 deltas.append((key + duration, -val, add))
+#             duration = (end_hour - start_hour) / len(bid["accepted_volume"])
+#             for key in bid["accepted_volume"].keys():
+#                 deltas.append((key, bid["accepted_volume"][key]) + add)
+#                 deltas.append((key + duration, -bid["accepted_volume"][key]) + add)
 #         else:
+#             # only_hours allows to have peak or off-peak bids
 #             start_hour, end_hour = bid["only_hours"]
 #             duration_hours = end_hour - start_hour
 #             if duration_hours <= 0:
 #                 duration_hours += 24
+#
 #             starts = rr.rrule(
 #                 rr.DAILY,
 #                 dtstart=bid["start_time"],
@@ -388,25 +314,101 @@ def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=No
 #             )
 #             for date in starts:
 #                 start = date
-#                 end_time = date + timedelta(hours=duration_hours)
-#                 deltas.append((start, bid["volume"], add))
-#                 deltas.append((end_time, -bid["volume"], add))
+#                 end = date + timedelta(hours=duration_hours)
+#                 deltas.append((start, bid["volume"]) + add)
+#                 deltas.append((end, -bid["volume"]) + add)
 #
-#     random.shuffle(deltas)
+#     # Test code for list.sort and sorted comparison
+#     # random.shuffle(deltas)
 #
 #     aggregation = defaultdict(list)
+#     # current_power is separated by group
 #     current_power = defaultdict(lambda: 0)
-#
-#     deltas.sort(key=lambda x: x[0])
-#     for time, delta, groupdata in deltas:
-#         current_power[groupdata] += delta
+#     for d_tuple in sorted(deltas, key=lambda i: i[0]):
+#         time, delta, *groupdata = d_tuple
+#         groupdata_str = "_".join(groupdata)
+#         current_power[groupdata_str] += delta
+#         #print("current_power: ", current_power[groupdata_str])
+#         # we don't know what the power will be at "end" yet
+#         # as a new order with this start point might be added
+#         # afterwards - so the end is excluded here
+#         # this also makes sure that each timestamp is only written
+#         # once when iteratively calling this function
 #         if (not begin or time >= begin) and (not end or time < end):
-#             if aggregation[groupdata] and aggregation[groupdata][-1][0] == time:
-#                 aggregation[groupdata][-1][1] = current_power[groupdata]
+#             if aggregation[groupdata_str] and aggregation[groupdata_str][-1][0] == time:
+#                 aggregation[groupdata_str][-1][1] = current_power[groupdata_str]
 #             else:
-#                 aggregation[groupdata].append([time, current_power[groupdata], *groupdata])
+#                 d_list = list(d_tuple)
+#                 d_list[1] = current_power[groupdata_str]
+#                 aggregation[groupdata_str].append(d_list)
 #
-#     return [item for sublist in aggregation.values() for item in sublist]
+#     return [j for sub in list(aggregation.values()) for j in sub]
+
+
+# Optimized code
+#
+def aggregate_step_amount(orderbook, begin=None, end=None, groupby=None):
+    if groupby is None:
+        groupby = []
+    deltas = []
+
+    for bid in orderbook:
+        bid_start_time = bid["start_time"]
+        bid_end_time = bid["end_time"]
+
+        # Opt 1: pre-filter
+        # If the bid's entire active period is outside the query window [begin, end], skip it.
+        if end is not None and bid_start_time >= end:
+            continue
+        if begin is not None and bid_end_time <= begin:
+            continue
+        # Opt 3: tuples instead of strins
+        add = tuple(bid[field] for field in groupby)
+        accepted = bid["accepted_volume"]
+        if bid["only_hours"] is None and not isinstance(accepted, dict):
+            deltas.append((bid["start_time"], accepted, add))
+            deltas.append((bid["end_time"], -accepted, add))
+        elif isinstance(accepted, dict):
+            start_hour = bid["start_time"]
+            end_hour = bid["end_time"]
+            duration = (start_hour - end_hour) / len(accepted)
+            for key, val in accepted.items():
+                deltas.append((key, val, add))
+                deltas.append((key + duration, -val, add))
+        else:
+            start_hour, end_hour = bid["only_hours"]
+            duration_hours = end_hour - start_hour
+            if duration_hours <= 0:
+                duration_hours += 24
+            starts = rr.rrule(
+                rr.DAILY,
+                dtstart=bid["start_time"],
+                byhour=start_hour,
+                until=bid["end_time"],
+            )
+            for date in starts:
+                start = date
+                end_time = date + timedelta(hours=duration_hours)
+                deltas.append((start, bid["volume"], add))
+                deltas.append((end_time, -bid["volume"], add))
+
+    # Test code for list.sort and sorted comparison
+    # random.shuffle(deltas)
+
+    aggregation = defaultdict(list)
+    current_power = defaultdict(lambda: 0)
+
+    # Opt 3: list.sort
+    deltas.sort(key=lambda x: x[0])
+    for time, delta, groupdata in deltas:
+        current_power[groupdata] += delta
+        if (not begin or time >= begin) and (not end or time < end):
+            if aggregation[groupdata] and aggregation[groupdata][-1][0] == time:
+                aggregation[groupdata][-1][1] = current_power[groupdata]
+            else:
+                aggregation[groupdata].append([time, current_power[groupdata], *groupdata])
+
+    return [item for sublist in aggregation.values() for item in sublist]
 
 def separate_orders(orderbook: Orderbook):
     """
