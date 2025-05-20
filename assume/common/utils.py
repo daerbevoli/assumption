@@ -285,7 +285,9 @@ def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=No
 
     # first we are creating a list of tuples with the following form:
     # start, delta_volume, bid_id, market_id
+    #print("len orderbook: ", len(orderbook))
     for bid in orderbook:
+        #print("bid: ", bid)
         add = ()
         for field in groupby:
             add += (bid[field],)
@@ -318,7 +320,8 @@ def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=No
                 deltas.append((start, bid["volume"]) + add)
                 deltas.append((end, -bid["volume"]) + add)
 
-    # #print(deltas)
+    #print("deltas: ", deltas)
+    #print("len: ", len(deltas))
     # random.shuffle(deltas)
     # #print(deltas)
     aggregation = defaultdict(list)
@@ -328,19 +331,27 @@ def aggregate_step_amount(orderbook: Orderbook, begin=None, end=None, groupby=No
         time, delta, *groupdata = d_tuple
         groupdata_str = "_".join(groupdata)
         current_power[groupdata_str] += delta
+        #print("current_power: ", current_power[groupdata_str])
         # we don't know what the power will be at "end" yet
         # as a new order with this start point might be added
         # afterwards - so the end is excluded here
         # this also makes sure that each timestamp is only written
         # once when iteratively calling this function
         if (not begin or time >= begin) and (not end or time < end):
+            #print("yes")
+            #print("data: ", aggregation[groupdata_str])
             if aggregation[groupdata_str] and aggregation[groupdata_str][-1][0] == time:
+            #    print("in second if loop")
                 aggregation[groupdata_str][-1][1] = current_power[groupdata_str]
+            #    print("aggregation in loop: ", aggregation[groupdata_str][-1][1])
             else:
                 d_list = list(d_tuple)
                 d_list[1] = current_power[groupdata_str]
                 aggregation[groupdata_str].append(d_list)
+        #print("aggregation after: ", aggregation)
+        #print("len aggregartion: ", len(aggregation))
 
+    #print("output: ", [j for sub in list(aggregation.values()) for j in sub])
     return [j for sub in list(aggregation.values()) for j in sub]
 
 

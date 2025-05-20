@@ -26,6 +26,8 @@ def run_simulation(num_agents):
     db_uri = "sqlite:///sim/sim.db"
     path = "./sim/units"
 
+    os.makedirs(path, exist_ok=True)
+
     # Prepare data
     start = time.perf_counter()
     runConfig(path, num_agents)
@@ -108,7 +110,7 @@ def analyze_tracemalloc(agents: int):
 def main():
 
     # Just run normally: (no simulation with 1 agent)
-    #run_simulation(10)
+    run_simulation(10)
     # simulation test with 10 agent of the sorted function when deltas is shuffled =
     # 10 - 156 s, 20 - 197, 30 - 241, 50 - 319, 100 - 547, test 200 - here
     # opt =
@@ -131,7 +133,7 @@ def main():
     # 1000
 
     # yappi time profiling
-    analyze_yappi("WALL", 10, "p_opt_calCash_10_wall")
+    # analyze_yappi("WALL", 10, "p_opt_calCash_10_wall")
 
 
     # cProfiler

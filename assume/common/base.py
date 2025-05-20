@@ -276,37 +276,39 @@ class BaseUnit:
             "unit_type": "base_unit",
         }
 
-    # def calculate_cashflow(self, product_type: str, orderbook: Orderbook):
-    #     """
-    #     Calculates the cashflow for the given product type.
-    #
-    #     Args:
-    #         product_type: The product type.
-    #         orderbook: The orderbook.
-    #     """
-    #     for order in orderbook:
-    #         start = order["start_time"]
-    #         end = order["end_time"]
-    #         # end includes the end of the last product, to get the last products' start time we deduct the frequency once
-    #         end_excl = end - self.index.freq
-    #
-    #         if isinstance(order["accepted_volume"], dict):
-    #             cashflow = np.array(
-    #                 [
-    #                     float(order["accepted_price"][i] * order["accepted_volume"][i])
-    #                     for i in order["accepted_volume"].keys()
-    #                 ]
-    #             )
-    #         else:
-    #             cashflow = float(
-    #                 order.get("accepted_price", 0) * order.get("accepted_volume", 0)
-    #             )
-    #
-    #         elapsed_intervals = (end - start) / self.index.freq
-    #         self.outputs[f"{product_type}_cashflow"].loc[start:end_excl] += (
-    #             cashflow * elapsed_intervals
-    #         )
+    def calculate_cashflow(self, product_type: str, orderbook: Orderbook):
+        """
+        Calculates the cashflow for the given product type.
 
+        Args:
+            product_type: The product type.
+            orderbook: The orderbook.
+        """
+        for order in orderbook:
+            start = order["start_time"]
+            end = order["end_time"]
+            # end includes the end of the last product, to get the last products' start time we deduct the frequency once
+            end_excl = end - self.index.freq
+
+            if isinstance(order["accepted_volume"], dict):
+                cashflow = np.array(
+                    [
+                        float(order["accepted_price"][i] * order["accepted_volume"][i])
+                        for i in order["accepted_volume"].keys()
+                    ]
+                )
+            else:
+                cashflow = float(
+                    order.get("accepted_price", 0) * order.get("accepted_volume", 0)
+                )
+
+            elapsed_intervals = (end - start) / self.index.freq
+            self.outputs[f"{product_type}_cashflow"].loc[start:end_excl] += (
+                cashflow * elapsed_intervals
+            )
+
+# Optimization:
+    # change small indexed
     def calculate_cashflow(self, product_type: str, orderbook: Orderbook):
         df_cashflow = FastSeries(value=0.0, index=self.index)
 
@@ -316,9 +318,11 @@ class BaseUnit:
             end_excl = end - self.index.freq
 
             if isinstance(order["accepted_volume"], dict):
-                cashflow = sum(
-                    float(order["accepted_price"][i] * order["accepted_volume"][i])
-                    for i in order["accepted_volume"].keys()
+                cashflow = np.array(
+                    [
+                        float(order["accepted_price"][i] * order["accepted_volume"][i])
+                        for i in order["accepted_volume"].keys()
+                    ]
                 )
             else:
                 cashflow = float(order["accepted_price"] * order["accepted_volume"])
