@@ -88,19 +88,19 @@ def analyze_tracemalloc(agents: int):
         return f"{size_bytes / 1024:.2f} KiB"
 
     def analyze_memory(snapshot_before, snapshot_after, top_n=10):
-        print(f"\n🔍 Top {top_n} memory differences by traceback:")
+        print(f"\n Top {top_n} memory differences by traceback:")
         stats = snapshot_after.compare_to(snapshot_before, 'traceback')
         for stat in stats[:top_n]:
-            print(f"\n📌 {format_size(stat.size_diff)} in {stat.count_diff} blocks")
+            print(f"\n{format_size(stat.size_diff)} in {stat.count_diff} blocks")
             for line in stat.traceback.format():
                 print(f"  {line}")
 
-        print(f"\n📍 Top {top_n} allocations by file and line:")
+        print(f"\nTop {top_n} allocations by file and line:")
         stats_by_line = snapshot_after.statistics('lineno')
         for stat in stats_by_line[:top_n]:
             print(f"{format_size(stat.size)}: {stat.traceback}")
 
-    print("🚀 Starting memory profiling...")
+    print("Starting memory profiling...")
     tracemalloc.start()
 
     snapshot_before = tracemalloc.take_snapshot()
@@ -112,9 +112,9 @@ def analyze_tracemalloc(agents: int):
     snapshot_after = tracemalloc.take_snapshot()
 
     current, peak = tracemalloc.get_traced_memory()
-    print(f"\n⏱️  Simulation time: {elapsed:.2f} sec")
-    print(f"📊 Current memory usage: {format_size(current)}")
-    print(f"📈 Peak memory usage: {format_size(peak)}")
+    print(f"\nSimulation time: {elapsed:.2f} sec")
+    print(f"Current memory usage: {format_size(current)}")
+    print(f"Peak memory usage: {format_size(peak)}")
 
     analyze_memory(snapshot_before, snapshot_after)
 
